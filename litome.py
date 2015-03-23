@@ -256,7 +256,7 @@ class Litome(Gtk.Application):
 
     def play_or_pause(self):
         self.client.noidle()
-        self.pause(self.client.status()['state'] == 'play')
+        self.client.pause(int(self.client.status()['state'] == 'play'))
         self.client.send_idle()
 
     def play(self):
