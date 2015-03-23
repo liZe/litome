@@ -27,6 +27,9 @@ def song_label(song):
         if artist:
             return '%s – %s' % (artist, title)
         return title
+    name = song.get('name')
+    if name:
+        return name
     filename = song.get('file')
     if filename:
         return filename.split('/')[-1].rsplit('.', 1)[0]
