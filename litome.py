@@ -22,16 +22,16 @@ from mpd import MPDClient
 
 def song_label(song):
     title = song.get('title')
-    if title:
+    if isinstance(title, str):
         artist = song.get('artist')
         if artist:
             return '%s – %s' % (artist, title)
         return title
     name = song.get('name')
-    if name:
+    if isinstance(name, str):
         return name
     filename = song.get('file')
-    if filename:
+    if isinstance(filename, str):
         return filename.split('/')[-1].rsplit('.', 1)[0]
     return '?'
 
