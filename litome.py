@@ -4,20 +4,24 @@
 Litome
 ======
 
-:copyright: (c) 2015 by Guillaume Ayoub and contributors.
+:copyright: (c) 2015-2021 by Guillaume Ayoub and contributors.
 :license: BSD, see LICENSE for more details.
 
 """
 
 import os
 import sys
-from configparser import SafeConfigParser
 from collections import OrderedDict
+from configparser import ConfigParser
 
 from dbus import Bus
 from dbus.mainloop.glib import DBusGMainLoop
-from gi.repository import Gtk, GObject
+from gi import require_version
+from gi.repository import GLib
 from mpd import MPDClient
+
+require_version('Gtk', '3.0')
+from gi.repository import Gtk  # noqa
 
 
 def song_label(song):
@@ -38,7 +42,7 @@ def song_label(song):
 
 class Litome(Gtk.Application):
     def do_activate(self):
-        config = SafeConfigParser()
+        config = ConfigParser()
         config.read(os.path.expanduser('~/.config/litome'))
 
         self.client = MPDClient()
@@ -50,7 +54,7 @@ class Litome(Gtk.Application):
                 password = config.get(section, 'password', fallback=None)
                 try:
                     self.client.connect(host, port)
-                except:
+                except BaseException:
                     continue
                 else:
                     if password:
@@ -65,7 +69,8 @@ class Litome(Gtk.Application):
         DBusGMainLoop(set_as_default=True)
         self.bus = Bus(Bus.TYPE_SESSION)
         self.bus_object = self.bus.get_object(
-            'org.gnome.SettingsDaemon', '/org/gnome/SettingsDaemon/MediaKeys')
+            'org.gnome.SettingsDaemon.MediaKeys',
+            '/org/gnome/SettingsDaemon/MediaKeys')
         self.bus_object.GrabMediaPlayerKeys(
             'Litome', 0, dbus_interface='org.gnome.SettingsDaemon.MediaKeys')
         self.bus_object.connect_to_signal(
@@ -97,7 +102,6 @@ class Litome(Gtk.Application):
         self.volume_button.use_symbolic = True
         self.volume_connection = self.volume_button.connect(
             'value-changed', lambda button, value: self.set_volume(value))
-        self.header.add(self.pause_button)
         self.header.pack_start(self.volume_button)
 
         self.add_button = Gtk.ToggleButton()
@@ -155,7 +159,7 @@ class Litome(Gtk.Application):
         self.window.show_all()
         self.update()
         self.client.send_idle()
-        GObject.io_add_watch(self.client, GObject.IO_IN, self.update_idle)
+        GLib.io_add_watch(self.client, GLib.IO_IN, self.update_idle)
 
     def search(self, string):
         self.search_store.clear()
