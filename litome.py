@@ -201,14 +201,12 @@ class Litome(Gtk.Application):
 
         albums = {}
         for song in album_songs + artists_songs:
-            song_artist = song.get('artist', '?')
             song_album = song.get('album', '?')
-            label = '%s – %s' % (song_artist, song_album)
-            if label in albums:
-                if song not in albums[label]:
-                    albums[label].append(song)
+            if song_album in albums:
+                if song not in albums[song_album]:
+                    albums[song_album].append(song)
             else:
-                albums[label] = [song]
+                albums[song_album] = [song]
 
         titles = {}
         for song in title_songs + album_songs + artists_songs + file_songs:
