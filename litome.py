@@ -28,7 +28,7 @@ def song_label(song):
     if isinstance(title, str):
         artist = song.get('artist')
         if artist:
-            return '%s – %s' % (artist, title)
+            return f'{artist} – {title}'
         return title
     name = song.get('name')
     if isinstance(name, str):
