@@ -11,7 +11,6 @@ Litome
 
 import os
 import sys
-from collections import OrderedDict
 from configparser import ConfigParser
 
 from dbus import Bus
@@ -191,7 +190,7 @@ class Litome(Gtk.Application):
         title_songs = self.client.search('title', string)
         file_songs = self.client.search('file', string)
 
-        artists = OrderedDict()
+        artists = {}
         for song in artists_songs:
             song_artist = song.get('artist', '?')
             if song_artist in artists:
@@ -200,7 +199,7 @@ class Litome(Gtk.Application):
             else:
                 artists[song_artist] = [song]
 
-        albums = OrderedDict()
+        albums = {}
         for song in album_songs + artists_songs:
             song_artist = song.get('artist', '?')
             song_album = song.get('album', '?')
@@ -211,7 +210,7 @@ class Litome(Gtk.Application):
             else:
                 albums[label] = [song]
 
-        titles = OrderedDict()
+        titles = {}
         for song in title_songs + album_songs + artists_songs + file_songs:
             label = song_label(song)
             if label in titles:
